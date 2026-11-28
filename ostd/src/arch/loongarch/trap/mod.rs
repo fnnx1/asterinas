@@ -14,7 +14,7 @@ pub use trap::TrapFrame;
 
 use crate::{
     arch::{
-        cpu::context::CpuExceptionInfo,
+        cpu::context::CpuException,
         irq::{HwIrqLine, disable_local, enable_local},
         mm::tlb_flush_addr,
     },
@@ -82,11 +82,7 @@ unsafe extern "C" fn trap_handler(f: &mut TrapFrame) {
                     );
                     crate::mm::fault::handle_user_page_fault(
                         f,
-                        &CpuExceptionInfo {
-                            code: exception,
-                            page_fault_addr: badv,
-                            error_code: 0,
-                        },
+                        &CpuException::new(exception, badv),
                         badv,
                     );
                 }
